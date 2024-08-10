@@ -24,11 +24,11 @@ docker-compose ps
 4. Acceder a la URL del orquestador de contenedores
 
 ```
-http://localhost:8080 Autenticación
-http://localhost:8081 Búsqueda
-http://localhost:8082 CMS
-http://localhost:8083 Gestión de Post
-http://localhost:8084 Imagenes
+http://localhost:8000 Autenticación
+http://localhost:8001 Búsqueda
+http://localhost:8002 CMS
+http://localhost:8003 Gestión de Post
+http://localhost:8004 Imagenes
 http://localhost:7040 Gestión de comentarios
 ```
 
