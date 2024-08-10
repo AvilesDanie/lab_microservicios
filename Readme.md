@@ -6,7 +6,7 @@ Este laboratorio tiene como objetivo la integración de varios microservicios me
 
 1.Clonar el repositorio
 ```bash
-[docker-compose up -d](https://github.com/AvilesDanie/lab_microservicios.git)
+https://github.com/AvilesDanie/lab_microservicios.git
 ```
 
 2. Iniciar los contenedores
