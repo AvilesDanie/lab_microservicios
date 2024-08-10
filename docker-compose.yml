@@ -17,6 +17,14 @@ services:
     container_name: MicroservicioAutenticacion
     environment:
       - DATABASE_URL=mysql+pymysql://root:12345@db:3306/AutenticacionDB
+      - DB_DIALECT=mysql
+      - DB_USER=root
+      - DB_PASSWORD=12345
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=AutenticacionDB
+      - SECRET_KEY=$2a$12$6li4g9rhuixJ3Ms8fhetgfergsxSZObtasdgdfPyct54ZCn.C6
+      - ALGORITHM=HS256
     ports:
       - "8000:8000"
     networks:
@@ -24,6 +32,8 @@ services:
     depends_on:
       - db
     command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+      
+
 
   # Servicio de Búsqueda
   busqueda:
@@ -41,16 +51,6 @@ services:
 
 
   # Servicio de CMS
-  db_cms:
-    image: nouchka/sqlite3
-    container_name: CMSDB
-    volumes:
-      - ./cms_project/db:/data
-    environment:
-      - SQLITE_DATABASE=mydatabase.db
-    networks:
-      - app-network
-
   cms:
     build:
       context: ./cms_project
@@ -59,10 +59,12 @@ services:
       - "8002:8000"
     networks:
       - app-network
-    depends_on:
-      - db_cms
-    command: 
+    command: >
+      bash -c "
+      python manage.py makemigrations comments &&
+      python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8000
+      "
 
 
 
