@@ -118,3 +118,4 @@ async def create_new_user(user: UserCreate, db: Session = Depends(get_db),):
 @router.get("/users/me/")
 async def get_user(db: Session = Depends(get_db),user: UserModel = Depends(get_user_disabled_current)):
     return LoginService.get_users(db=db)
+

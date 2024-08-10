@@ -1,6 +1,6 @@
 services:
   # Servicio de Autenticación
-  db_autenticacion:
+  db:
     image: mysql:9.0.1
     container_name: AutenticacionDB
     environment:
@@ -15,29 +15,37 @@ services:
     build:
       context: ./autenticacion
     container_name: MicroservicioAutenticacion
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:12345@db:3306/AutenticacionDB
     ports:
       - "8000:8000"
     networks:
       - app-network
     depends_on:
-      - db_autenticacion
+      - db
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
   # Servicio de Búsqueda
   busqueda:
     build:
-      context: ./busqueda/fastAPI
+      context: ./busqueda
     container_name: MicroservicioBusqueda
     ports:
       - "8001:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./test.db
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     networks:
       - app-network
+
+
 
   # Servicio de CMS
   db_cms:
     image: nouchka/sqlite3
     container_name: CMSDB
     volumes:
-      - ./cms_project/db:/data
+      - ./db:/data
     environment:
       - SQLITE_DATABASE=mydatabase.db
     networks:
@@ -53,8 +61,11 @@ services:
       - app-network
     depends_on:
       - db_cms
-    command: >
-      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: 
+      python manage.py runserver 0.0.0.0:8000
+
+
+
 
   # Servicio de Gestión de Post
   gestion_post:
@@ -67,6 +78,21 @@ services:
       - app-network
     environment:
       - DATABASE_URL=sqlite:///./test.db
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+
+
+# Servicio de Gestión de Imagenes
+  imagenes:
+    build:
+      context: ./imagenes
+    container_name: MicroservicioImagenes
+    ports:
+      - "8004:8000"
+    networks:
+      - app-network
+    environment:
+      - DATABASE_URL=sqlite:///./images.db
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 networks:
